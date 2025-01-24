@@ -177,7 +177,7 @@ window.addEventListener("load", function () {
       this.image = document.getElementById("backgroundImage");
       this.x = 0;
       this.y = 0;
-      this.width = gameWidth; // Match game width exactly
+      this.width = gameWidth * 2; // Match game width exactly
       this.height = gameHeight; // Match game height exactly
       this.speed = 7;
     }
