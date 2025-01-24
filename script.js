@@ -3,8 +3,8 @@ window.addEventListener("load", function () {
   const canvas = document.getElementById("canvas1");
   const ctx = canvas.getContext("2d");
   // Set fixed canvas dimensions
-  canvas.width = 1400;
-  canvas.height = 720;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
   // Global game state variables
   let enemies = []; // Array to store active enemy objects
@@ -177,9 +177,9 @@ window.addEventListener("load", function () {
       this.image = document.getElementById("backgroundImage");
       this.x = 0;
       this.y = 0;
-      this.width = 2400;
-      this.height = 720;
-      this.speed = 7; // Scrolling speed
+      this.width = gameWidth; // Match game width exactly
+      this.height = gameHeight; // Match game height exactly
+      this.speed = 7;
     }
 
     // Draw background image (two images for seamless scrolling)
