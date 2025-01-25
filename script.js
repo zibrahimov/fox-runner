@@ -219,51 +219,26 @@ window.addEventListener("load", function () {
     constructor(gameWidth, gameHeight) {
       this.gameWidth = gameWidth;
       this.gameHeight = gameHeight;
-      this.width = 160;
-      this.height = 119;
       this.image = document.getElementById("enemyImage");
+
+      // Scale down image
+      this.scale = 0.2; // Adjust this value to control size
+      this.width = this.image.width * this.scale;
+      this.height = this.image.height * this.scale;
 
       // Start at right side of screen
       this.x = this.gameWidth;
       this.y = this.gameHeight - this.height;
 
-      // Sprite animation properties
-      this.frameX = 0;
-      this.maxFrame = 5;
-      this.fps = 20;
-      this.frameTimer = 0;
-      this.frameInterval = 1000 / this.fps;
-
-      this.speed = 8; // Horizontal movement speed
-      this.markedForDeletion = false; // Flag for removing enemy
+      this.speed = 8;
+      this.markedForDeletion = false;
     }
 
-    // Draw enemy sprite
     draw(context) {
-      context.drawImage(
-        this.image,
-        this.frameX * this.width, // Source X position in sprite sheet
-        0, // Source Y position
-        this.width, // Source width
-        this.height, // Source height
-        this.x, // Destination X position
-        this.y, // Destination Y position
-        this.width, // Destination width
-        this.height // Destination height
-      );
+      context.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
 
-    // Update enemy state and animation
-    update(deltaTime) {
-      // Sprite animation
-      if (this.frameTimer > this.frameInterval) {
-        if (this.frameX >= this.maxFrame) this.frameX = 0;
-        else this.frameX; // Note: Possible bug, should be this.frameX++;
-        this.frameTimer = 0;
-      } else {
-        this.frameTimer += deltaTime;
-      }
-
+    update() {
       // Move enemy to the left
       this.x -= this.speed;
 
@@ -288,7 +263,7 @@ window.addEventListener("load", function () {
 
     enemies.forEach((enemy) => {
       enemy.draw(ctx);
-      enemy.update(deltaTime);
+      enemy.update();
     });
 
     enemies = enemies.filter((enemy) => !enemy.markedForDeletion);
@@ -343,7 +318,6 @@ window.addEventListener("load", function () {
   let lastTime = 0;
   let enemyTimer = 0;
   let enemyInterval = 1000;
-  let randomEnemyInterval = Math.random() * 1000 + 500;
 
   // Main game animation loop
   function animate(timeStamp) {
