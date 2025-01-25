@@ -57,11 +57,13 @@ window.addEventListener("load", function () {
       this.gameWidth = gameWidth;
       this.gameHeight = gameHeight;
 
-      this.spriteWidth = 32;
-      this.spriteHeight = 32;
+      this.scale = 5;
 
-      this.width = this.spriteWidth;
-      this.height = this.spriteHeight;
+      this.spriteWidth = 32;
+      this.spriteHeight = 33;
+
+      this.width = this.spriteWidth * this.scale;
+      this.height = this.spriteHeight * this.scale;
 
       // Initial player position (bottom-left of canvas)
       this.x = 100;
@@ -98,12 +100,12 @@ window.addEventListener("load", function () {
         this.image,
         this.frameX * this.spriteWidth, // Source X position in sprite sheet
         this.frameY * this.spriteHeight, // Source Y position in sprite sheet
-        this.width, // Source width
-        this.height, // Source height
+        this.spriteWidth, // Source width
+        this.spriteHeight, // Source height
         this.x, // Destination X position
         this.y, // Destination Y position
-        this.width, // Destination width
-        this.height // Destination height
+        this.spriteWidth * this.scale, // Destination width
+        this.spriteHeight * this.scale // Destination height
       );
     }
 
@@ -163,8 +165,9 @@ window.addEventListener("load", function () {
       }
 
       // Prevent player from falling below ground
-      if (this.y > this.gameHeight - this.height)
+      if (this.y > this.gameHeight - this.height) {
         this.y = this.gameHeight - this.height;
+      }
     }
 
     // Check if player is on ground
