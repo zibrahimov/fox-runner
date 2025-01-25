@@ -277,22 +277,20 @@ window.addEventListener("load", function () {
 
   // Handles enemy spawning and management
   function handleEnemies(deltaTime) {
-    // Spawn new enemy at random intervals
-    if (enemyTimer > enemyInterval + randomEnemyInterval) {
+    if (enemyTimer > enemyInterval) {
       enemies.push(new Enemy(canvas.width, canvas.height));
-      randomEnemyInterval = Math.random() * 1000 + 500;
       enemyTimer = 0;
+      // Randomize next spawn interval
+      enemyInterval = Math.random() * 1000 + 500;
     } else {
       enemyTimer += deltaTime;
     }
 
-    // Draw and update all active enemies
     enemies.forEach((enemy) => {
       enemy.draw(ctx);
       enemy.update(deltaTime);
     });
 
-    // Remove enemies marked for deletion
     enemies = enemies.filter((enemy) => !enemy.markedForDeletion);
   }
 
