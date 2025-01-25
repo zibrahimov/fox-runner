@@ -56,8 +56,12 @@ window.addEventListener("load", function () {
       // Game and player dimensions
       this.gameWidth = gameWidth;
       this.gameHeight = gameHeight;
-      this.width = 200;
-      this.height = 200;
+
+      this.spriteWidth = 32;
+      this.spriteHeight = 32;
+
+      this.width = this.spriteWidth;
+      this.height = this.spriteHeight;
 
       // Initial player position (bottom-left of canvas)
       this.x = 100;
@@ -66,8 +70,8 @@ window.addEventListener("load", function () {
       // Sprite sheet and animation properties
       this.image = document.getElementById("playerImage");
       this.frameX = 0; // Current horizontal frame
-      this.maxFrame = 8; // Maximum frames in sprite sheet
-      this.frameY = 0; // Current vertical frame (animation state)
+      this.maxFrame = 7; // Maximum frames in sprite sheet
+      this.frameY = 2; // Current vertical frame (animation state)
 
       // Animation timing
       this.fps = 20;
@@ -84,16 +88,16 @@ window.addEventListener("load", function () {
     restart() {
       this.x = 100;
       this.y = this.gameHeight - this.height;
-      this.maxFrame = 8;
-      this.frameY = 0;
+      this.maxFrame = 7;
+      this.frameY = 2;
     }
 
     // Draw player sprite on canvas
     draw(context) {
       context.drawImage(
         this.image,
-        this.frameX * this.width, // Source X position in sprite sheet
-        this.frameY * this.height, // Source Y position in sprite sheet
+        this.frameX * this.spriteWidth, // Source X position in sprite sheet
+        this.frameY * this.spriteHeight, // Source Y position in sprite sheet
         this.width, // Source width
         this.height, // Source height
         this.x, // Destination X position
@@ -151,11 +155,11 @@ window.addEventListener("load", function () {
       if (!this.onGround()) {
         this.vy += this.weight; // Apply gravity
         this.maxFrame = 5; // Change to jumping sprite
-        this.frameY = 1;
+        this.frameY = 2;
       } else {
         this.vy = 0; // Stop vertical movement when on ground
-        this.maxFrame = 8; // Return to running sprite
-        this.frameY = 0;
+        this.maxFrame = 7; // Return to running sprite
+        this.frameY = 2;
       }
 
       // Prevent player from falling below ground
