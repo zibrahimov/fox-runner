@@ -271,29 +271,38 @@ window.addEventListener("load", function () {
 
   // Display score and game over text
   function displayStatusText(context) {
-    // Score display with black outline
+    // Score display with black outline and shadow
     context.textAlign = "left";
-    context.font = "40px Helvetice";
-    context.fillStyle = "black";
-    context.fillText("Score: " + score, 20, 50);
-    context.fillStyle = "white";
-    context.fillText("Score: " + score, 22, 52);
+    context.font = "30px 'Press Start 2P', cursive";
+    context.shadowColor = "rgba(0, 0, 0, 0.8)"; // Text shadow
+    context.shadowOffsetX = 2;
+    context.shadowOffsetY = 2;
+    context.shadowBlur = 4;
 
-    // Game over text when game ends
+    // Score outline for better visibility
+    context.lineWidth = 5;
+    context.strokeStyle = "#000"; // Black outline
+    context.lineJoin = "round";
+    context.strokeText("Score: " + score, 20, 50); // Draw outline
+    context.fillStyle = "white"; // Text color
+    context.fillText("Score: " + score, 22, 52); // Draw text
+
+    // Game over text when the game ends
     if (gameOver) {
       context.textAlign = "center";
+      // Apply similar text style for "Game Over"
       context.fillStyle = "black";
-      context.fillText(
+      context.strokeText(
         "GAME OVER, press Enter to restart!",
         canvas.width / 2,
         200
-      );
-      context.fillStyle = "white";
+      ); // Outline
+      context.fillStyle = "white"; // Text color
       context.fillText(
         "GAME OVER, press Enter to restart!",
         canvas.width / 2 + 2,
         202
-      );
+      ); // Fill text
     }
   }
 
