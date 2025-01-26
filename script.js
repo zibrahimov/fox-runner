@@ -25,12 +25,7 @@ window.addEventListener("load", function () {
       // Event listener for key presses
       window.addEventListener("keydown", (e) => {
         // Only add arrow keys to Set if not already present
-        if (
-          e.key === "ArrowDown" ||
-          e.key === "ArrowUp" ||
-          e.key === "ArrowLeft" ||
-          e.key === "ArrowRight"
-        ) {
+        if (e.key === "ArrowUp") {
           this.keys.add(e.key); // Efficiently add key
         }
         // Restart game if Enter is pressed when game is over
@@ -42,12 +37,7 @@ window.addEventListener("load", function () {
       // Event listener for key releases
       window.addEventListener("keyup", (e) => {
         // Remove arrow keys from Set when released
-        if (
-          e.key === "ArrowDown" ||
-          e.key === "ArrowUp" ||
-          e.key === "ArrowLeft" ||
-          e.key === "ArrowRight"
-        ) {
+        if (e.key === "ArrowUp") {
           this.keys.delete(e.key); // Efficiently remove key
         }
       });
@@ -75,9 +65,10 @@ window.addEventListener("load", function () {
 
       // Sprite sheet and animation properties
       this.image = document.getElementById("playerImage");
+
       this.frameX = 0; // Current horizontal frame
-      this.maxFrame = 7; // Maximum frames in sprite sheet
       this.frameY = 2; // Current vertical frame (animation state)
+      this.maxFrame = 7; // Maximum frames in sprite sheet
 
       // Animation timing
       this.fps = 20;
@@ -139,11 +130,7 @@ window.addEventListener("load", function () {
       }
 
       // Player movement controls
-      if (input.keys.has("ArrowRight")) {
-        this.speed = 5; // Move right
-      } else if (input.keys.has("ArrowLeft")) {
-        this.speed = -5; // Move left
-      } else if (input.keys.has("ArrowUp") && this.onGround()) {
+      if (input.keys.has("ArrowUp") && this.onGround()) {
         this.vy -= 32; // Jump when on ground
       } else {
         this.speed = 0; // Stop horizontal movement
@@ -160,8 +147,10 @@ window.addEventListener("load", function () {
       this.y += this.vy;
       if (!this.onGround()) {
         this.vy += this.weight; // Apply gravity
-        this.maxFrame = 5; // Change to jumping sprite
-        this.frameY = 2;
+        // Change to the jumping sprite
+        this.maxFrame = 5;
+        this.frameY = 3;
+        this.frameX = 4;
       } else {
         this.vy = 0; // Stop vertical movement when on ground
         this.maxFrame = 7; // Return to running sprite
