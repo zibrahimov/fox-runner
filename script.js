@@ -1,3 +1,5 @@
+import { displayCountdown, displayStatusText } from "./src/utils.js";
+
 window.addEventListener("load", function () {
   // Get the canvas element and set up its drawing context
   const canvas = document.getElementById("canvas1");
@@ -272,69 +274,6 @@ window.addEventListener("load", function () {
     enemies = enemies.filter((enemy) => !enemy.markedForDeletion);
   }
 
-  // Display score and game over text
-  function displayStatusText(context) {
-    // Score display with black outline and shadow
-    context.textAlign = "left";
-    context.font = "30px 'Press Start 2P', cursive";
-    context.shadowColor = "rgba(0, 0, 0, 0.8)"; // Text shadow
-    context.shadowOffsetX = 2;
-    context.shadowOffsetY = 2;
-    context.shadowBlur = 4;
-
-    // Score outline for better visibility
-    context.lineWidth = 5;
-    context.strokeStyle = "#000"; // Black outline
-    context.lineJoin = "round";
-    context.strokeText("Score: " + score, 20, 50); // Draw outline
-    context.fillStyle = "white"; // Text color
-    context.fillText("Score: " + score, 22, 52); // Draw text
-
-    // Game over text when the game ends
-    if (gameOver) {
-      context.textAlign = "center";
-      // Apply similar text style for "Game Over"
-      context.fillStyle = "black";
-      context.strokeText(
-        "GAME OVER, press Enter to restart!",
-        canvas.width / 2,
-        200
-      ); // Outline
-      context.fillStyle = "white"; // Text color
-      context.fillText(
-        "GAME OVER, press Enter to restart!",
-        canvas.width / 2 + 2,
-        202
-      ); // Fill text
-    }
-  }
-
-  // New function to display countdown
-  function displayCountdown(context) {
-    context.textAlign = "center";
-    context.font = "80px 'Press Start 2P', cursive";
-    context.shadowColor = "rgba(0, 0, 0, 0.8)"; // Text shadow
-    context.shadowOffsetX = 3;
-    context.shadowOffsetY = 3;
-    context.shadowBlur = 5;
-
-    // Countdown outline for better visibility
-    context.lineWidth = 7;
-    context.strokeStyle = "#000"; // Black outline
-    context.lineJoin = "round";
-    context.strokeText(
-      countdown > 0 ? countdown.toString() : "GO!",
-      canvas.width / 2,
-      canvas.height / 2
-    );
-    context.fillStyle = "white"; // Text color
-    context.fillText(
-      countdown > 0 ? countdown.toString() : "GO!",
-      canvas.width / 2 + 2,
-      canvas.height / 2 + 2
-    );
-  }
-
   // Restart the game to initial state
   function restartGame() {
     player.restart();
@@ -386,7 +325,7 @@ window.addEventListener("load", function () {
         gameStarted = true;
       }
 
-      displayCountdown(ctx);
+      displayCountdown(ctx, countdown, canvas);
     }
 
     // Only update game elements when game has started
@@ -396,7 +335,7 @@ window.addEventListener("load", function () {
       handleEnemies(deltaTime);
     }
 
-    displayStatusText(ctx);
+    displayStatusText(ctx, score, gameOver, canvas);
 
     if (!gameOver) requestAnimationFrame(animate);
   }
