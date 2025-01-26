@@ -10,6 +10,9 @@ window.addEventListener("load", function () {
   let enemies = []; // Array to store active enemy objects
   let score = 0; // Player's score
   let gameOver = false; // Flag to track game over state
+  let gameStarted = false; // // Flag to track game start state
+  let countdownTimer = 0; // Timer for countdown
+  let countdown = 3; // Initial countdown value
 
   // Input Handler class manages keyboard input
   class InputHandler {
@@ -306,6 +309,32 @@ window.addEventListener("load", function () {
     }
   }
 
+  // New function to display countdown
+  function displayCountdown(context) {
+    context.textAlign = "center";
+    context.font = "80px 'Press Start 2P', cursive";
+    context.shadowColor = "rgba(0, 0, 0, 0.8)"; // Text shadow
+    context.shadowOffsetX = 3;
+    context.shadowOffsetY = 3;
+    context.shadowBlur = 5;
+
+    // Countdown outline for better visibility
+    context.lineWidth = 7;
+    context.strokeStyle = "#000"; // Black outline
+    context.lineJoin = "round";
+    context.strokeText(
+      countdown > 0 ? countdown.toString() : "GO!",
+      canvas.width / 2,
+      canvas.height / 2
+    );
+    context.fillStyle = "white"; // Text color
+    context.fillText(
+      countdown > 0 ? countdown.toString() : "GO!",
+      canvas.width / 2 + 2,
+      canvas.height / 2 + 2
+    );
+  }
+
   // Restart the game to initial state
   function restartGame() {
     player.restart();
@@ -314,6 +343,9 @@ window.addEventListener("load", function () {
     enemies = [];
     score = 0;
     gameOver = false;
+    gameStarted = false;
+    countdown = 3;
+    countdownTimer = 0;
 
     animate(0);
   }
@@ -330,28 +362,42 @@ window.addEventListener("load", function () {
 
   // Main game animation loop
   function animate(timeStamp) {
-    // Calculate time between frames
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
 
-    // Clear canvas for redrawing
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Update and draw background
+    // Draw background without updating during countdown
     background.draw(ctx);
-    background.update();
 
-    // Update and draw player
+    // Always draw player during countdown
     player.draw(ctx);
-    player.update(input, deltaTime, enemies);
 
-    // Handle enemy spawning and management
-    handleEnemies(deltaTime);
+    // Countdown logic before game starts
+    if (!gameStarted) {
+      if (countdownTimer > 1000) {
+        countdown--;
+        countdownTimer = 0;
+      } else {
+        countdownTimer += deltaTime;
+      }
 
-    // Display score and game over text
+      if (countdown < 0) {
+        gameStarted = true;
+      }
+
+      displayCountdown(ctx);
+    }
+
+    // Only update game elements when game has started
+    if (gameStarted && !gameOver) {
+      background.update();
+      player.update(input, deltaTime, enemies);
+      handleEnemies(deltaTime);
+    }
+
     displayStatusText(ctx);
 
-    // Continue animation if game is not over
     if (!gameOver) requestAnimationFrame(animate);
   }
 
