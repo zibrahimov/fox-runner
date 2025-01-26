@@ -1,4 +1,3 @@
-// utils.js
 function displayCountdown(context, countdown, canvas) {
   context.textAlign = "center";
   context.font = "80px 'Press Start 2P', cursive";

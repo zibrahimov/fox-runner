@@ -19,20 +19,19 @@ window.addEventListener("load", function () {
   // Input Handler class manages keyboard input
   class InputHandler {
     constructor() {
-      // Array to track currently pressed keys
-      this.keys = [];
+      // Use Set to track currently pressed keys
+      this.keys = new Set();
 
       // Event listener for key presses
       window.addEventListener("keydown", (e) => {
-        // Add arrow keys to keys array if not already present
+        // Only add arrow keys to Set if not already present
         if (
-          (e.key === "ArrowDown" ||
-            e.key === "ArrowUp" ||
-            e.key === "ArrowLeft" ||
-            e.key === "ArrowRight") &&
-          this.keys.indexOf(e.key) === -1
+          e.key === "ArrowDown" ||
+          e.key === "ArrowUp" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight"
         ) {
-          this.keys.push(e.key);
+          this.keys.add(e.key); // Efficiently add key
         }
         // Restart game if Enter is pressed when game is over
         else if (e.key === "Enter" && gameOver) {
@@ -42,14 +41,14 @@ window.addEventListener("load", function () {
 
       // Event listener for key releases
       window.addEventListener("keyup", (e) => {
-        // Remove arrow keys from keys array when released
+        // Remove arrow keys from Set when released
         if (
           e.key === "ArrowDown" ||
           e.key === "ArrowUp" ||
           e.key === "ArrowLeft" ||
           e.key === "ArrowRight"
         ) {
-          this.keys.splice(this.keys.indexOf(e.key), 1);
+          this.keys.delete(e.key); // Efficiently remove key
         }
       });
     }
@@ -140,11 +139,11 @@ window.addEventListener("load", function () {
       }
 
       // Player movement controls
-      if (input.keys.indexOf("ArrowRight") > -1) {
+      if (input.keys.has("ArrowRight")) {
         this.speed = 5; // Move right
-      } else if (input.keys.indexOf("ArrowLeft") > -1) {
+      } else if (input.keys.has("ArrowLeft")) {
         this.speed = -5; // Move left
-      } else if (input.keys.indexOf("ArrowUp") > -1 && this.onGround()) {
+      } else if (input.keys.has("ArrowUp") && this.onGround()) {
         this.vy -= 32; // Jump when on ground
       } else {
         this.speed = 0; // Stop horizontal movement
