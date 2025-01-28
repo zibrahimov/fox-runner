@@ -16,6 +16,9 @@ window.addEventListener("load", function () {
   let countdownTimer = 0;
   let countdown = 3;
 
+  const ENEMY_SPAWN_MIN = 500;
+  const ENEMY_SPAWN_MAX = 1500;
+
   class InputHandler {
     constructor() {
       this.keys = new Set();
@@ -192,7 +195,8 @@ window.addEventListener("load", function () {
     if (enemyTimer > enemyInterval) {
       enemies.push(new Enemy(canvas.width, canvas.height));
       enemyTimer = 0;
-      enemyInterval = Math.random() * 1000 + 500;
+      enemyInterval =
+        Math.random() * (ENEMY_SPAWN_MAX - ENEMY_SPAWN_MIN) + ENEMY_SPAWN_MIN;
     } else {
       enemyTimer += deltaTime;
     }
