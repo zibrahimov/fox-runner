@@ -211,12 +211,14 @@ window.addEventListener("load", function () {
       enemyTimer += deltaTime;
     }
 
-    for (let i = 0; i < enemies.length; i++) {
-      enemies[i].draw(ctx);
-      enemies[i].update();
+    for (const enemy of enemies) {
+      enemy.draw(ctx);
+      enemy.update();
     }
 
-    enemies = enemies.filter((enemy) => !enemy.markedForDeletion);
+    if (enemies.length > 0 && enemies[0].markedForDeletion) {
+      enemies = enemies.filter((enemy) => !enemy.markedForDeletion);
+    }
   }
 
   function restartGame() {
