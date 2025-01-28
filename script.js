@@ -1,4 +1,5 @@
 window.addEventListener("load", function () {
+  // Get canvas and 2D context to draw
   const canvas = document.getElementById("canvas1");
   const ctx = canvas.getContext("2d", { alpha: false });
 
@@ -10,30 +11,33 @@ window.addEventListener("load", function () {
   canvas.width = GAME_WIDTH;
   canvas.height = GAME_HEIGHT;
 
-  // Game state
-  let enemies = [];
-  let score = 0;
-  let gameOver = false;
-  let gameStarted = false;
-  let countdownTimer = 0;
-  let countdown = 3;
+  // Game state variables
+  let enemies = []; // Stores the active enemies
+  let score = 0; // Player score
+  let gameOver = false; // Game over state
+  let gameStarted = false; // Game start state
+  let countdownTimer = 0; // Timer for countdown
+  let countdown = 3; // Countdown seconds before game starts
 
-  const ENEMY_SPAWN_MIN = 500;
-  const ENEMY_SPAWN_MAX = 1500;
+  const ENEMY_SPAWN_MIN = 500; // Min time between enemy spawns
+  const ENEMY_SPAWN_MAX = 1500; // Max time between enemy spawns
 
+  // InputHandler to capture user inputs (e.g., arrow keys and enter)
   class InputHandler {
     constructor() {
       this.keys = new Set();
 
+      // Register keydown event to track ArrowUp and Enter keys
       this.handleKeyDown = (e) => {
         if (e.key === "ArrowUp") {
           e.preventDefault(); // Prevent page scrolling
           this.keys.add(e.key);
         } else if (e.key === "Enter" && gameOver) {
-          restartGame();
+          restartGame(); // Restart game if Enter is pressed after game over
         }
       };
 
+      // Register keyup event to stop tracking ArrowUp key
       this.handleKeyUp = (e) => {
         if (e.key === "ArrowUp") {
           this.keys.delete(e.key);
@@ -44,12 +48,14 @@ window.addEventListener("load", function () {
       window.addEventListener("keyup", this.handleKeyUp);
     }
 
+    // Cleanup event listeners when no longer needed
     cleanup() {
       window.removeEventListener("keydown", this.handleKeyDown);
       window.removeEventListener("keyup", this.handleKeyUp);
     }
   }
 
+  // Player class to handle player-related logic
   class Player {
     constructor(gameWidth, gameHeight) {
       this.gameWidth = gameWidth;
@@ -59,19 +65,20 @@ window.addEventListener("load", function () {
       this.spriteHeight = 33;
       this.width = this.spriteWidth * this.scale;
       this.height = this.spriteHeight * this.scale;
-      this.x = 100;
-      this.y = this.gameHeight - this.height;
-      this.image = document.getElementById("playerImage");
+      this.x = 100; // Initial x-position
+      this.y = this.gameHeight - this.height; // Initial y-position
+      this.image = document.getElementById("playerImage"); // Player sprite
       this.frameX = 0;
-      this.frameY = 2;
-      this.maxFrame = 7;
+      this.frameY = 2; // Start from the default idle frame
+      this.maxFrame = 7; // Max frame for animation
       this.fps = 20;
       this.frameTimer = 0;
-      this.frameInterval = 1000 / this.fps;
-      this.vy = 0;
-      this.weight = 1;
+      this.frameInterval = 1000 / this.fps; // Time between frames for animation
+      this.vy = 0; // Vertical velocity for jumping
+      this.weight = 1; // Gravity effect
     }
 
+    // Reset player state to start a new game
     restart() {
       this.x = 100;
       this.y = this.gameHeight - this.height;
@@ -80,6 +87,7 @@ window.addEventListener("load", function () {
       this.vy = 0;
     }
 
+    // Draw the player sprite at the current position
     draw(context) {
       context.drawImage(
         this.image,
@@ -94,8 +102,9 @@ window.addEventListener("load", function () {
       );
     }
 
+    // Update player position, handle input, and check collisions
     update(input, deltaTime, enemies) {
-      // Collision detection
+      // Collision detection with enemies
       for (let i = 0; i < enemies.length; i++) {
         const enemy = enemies[i];
         const dx = enemy.x + enemy.width / 2 - (this.x + this.width / 2);
@@ -103,12 +112,12 @@ window.addEventListener("load", function () {
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance < enemy.width / 2 + this.width / 2) {
-          gameOver = true;
+          gameOver = true; // End the game if player collides with enemy
           break;
         }
       }
 
-      // Sprite animation
+      // Handle sprite animation for player movement
       if (this.frameTimer > this.frameInterval) {
         if (this.frameX >= this.maxFrame) this.frameX = 0;
         else this.frameX++;
@@ -119,42 +128,45 @@ window.addEventListener("load", function () {
 
       // Jump control
       if (input.keys.has("ArrowUp") && this.onGround()) {
-        this.vy = -32;
+        this.vy = -32; // Apply upwards force when jumping
       }
 
-      // Vertical movement
+      // Vertical movement and gravity effect
       this.y += this.vy;
 
       if (!this.onGround()) {
-        this.vy += this.weight;
-        this.maxFrame = 5;
+        this.vy += this.weight; // Apply gravity
+        this.maxFrame = 5; // Change to falling animation
         this.frameY = 3;
         this.frameX = 4;
       } else {
         this.vy = 0;
-        this.y = this.gameHeight - this.height;
-        this.maxFrame = 7;
+        this.y = this.gameHeight - this.height; // Player lands on the ground
+        this.maxFrame = 7; // Change to idle animation
         this.frameY = 2;
       }
     }
 
+    // Check if player is on the ground (not falling)
     onGround() {
       return this.y >= this.gameHeight - this.height;
     }
   }
 
+  // Background class to manage the scrolling background
   class Background {
     constructor(gameWidth, gameHeight) {
       this.gameWidth = gameWidth;
       this.gameHeight = gameHeight;
-      this.image = document.getElementById("backgroundImage");
+      this.image = document.getElementById("backgroundImage"); // Background image
       this.x = 0;
       this.y = 0;
       this.width = gameWidth;
       this.height = gameHeight;
-      this.speed = 7;
+      this.speed = 7; // Scroll speed
     }
 
+    // Draw background twice to create a seamless scrolling effect
     draw(context) {
       context.drawImage(this.image, this.x, this.y, this.width, this.height);
       context.drawImage(
@@ -166,49 +178,55 @@ window.addEventListener("load", function () {
       );
     }
 
+    // Update background position for scrolling
     update() {
       this.x -= this.speed;
-      if (this.x < -this.width) this.x = 0;
+      if (this.x < -this.width) this.x = 0; // Loop background
     }
 
+    // Reset background to its initial position
     restart() {
       this.x = 0;
     }
   }
 
+  // Enemy class to manage enemy behavior and rendering
   class Enemy {
     constructor(gameWidth, gameHeight) {
       this.gameWidth = gameWidth;
       this.gameHeight = gameHeight;
-      this.image = document.getElementById("enemyImage");
-      this.scale = 0.2;
+      this.image = document.getElementById("enemyImage"); // Enemy sprite
+      this.scale = 0.2; // Scale of the enemy
       this.width = this.image.width * this.scale;
       this.height = this.image.height * this.scale;
-      this.x = this.gameWidth;
+      this.x = this.gameWidth; // Start enemy off-screen
       this.y = this.gameHeight - this.height;
-      this.speed = 8;
-      this.markedForDeletion = false;
+      this.speed = 8; // Enemy movement speed
+      this.markedForDeletion = false; // Flag to mark enemies for deletion
     }
 
+    // Draw the enemy sprite at its current position
     draw(context) {
       context.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
 
+    // Update the enemy position and check if it should be removed
     update() {
       this.x -= this.speed;
       if (this.x < 0 - this.width) {
-        this.markedForDeletion = true;
-        score++;
+        this.markedForDeletion = true; // Mark enemy for deletion when off-screen
+        score++; // Increment score for each enemy passed
       }
     }
   }
 
+  // Handle enemy spawning and updating
   function handleEnemies(deltaTime) {
     if (enemyTimer > enemyInterval) {
-      enemies.push(new Enemy(canvas.width, canvas.height));
+      enemies.push(new Enemy(canvas.width, canvas.height)); // Spawn a new enemy
       enemyTimer = 0;
       enemyInterval =
-        Math.random() * (ENEMY_SPAWN_MAX - ENEMY_SPAWN_MIN) + ENEMY_SPAWN_MIN;
+        Math.random() * (ENEMY_SPAWN_MAX - ENEMY_SPAWN_MIN) + ENEMY_SPAWN_MIN; // Random interval for next enemy
     } else {
       enemyTimer += deltaTime;
     }
@@ -218,11 +236,13 @@ window.addEventListener("load", function () {
       enemy.update();
     }
 
+    // Remove enemies that are off-screen
     if (enemies.length > 0 && enemies[0].markedForDeletion) {
       enemies = enemies.filter((enemy) => !enemy.markedForDeletion);
     }
   }
 
+  // Restart the game by resetting all states
   function restartGame() {
     player.restart();
     background.restart();
@@ -232,9 +252,10 @@ window.addEventListener("load", function () {
     gameStarted = false;
     countdown = 3;
     countdownTimer = 0;
-    animate(0);
+    animate(0); // Start animation loop
   }
 
+  // Clean up game state and input handlers when exiting
   function cleanup() {
     cancelAnimationFrame(animationFrameId);
     input.cleanup();
@@ -249,6 +270,7 @@ window.addEventListener("load", function () {
   let enemyTimer = 0;
   let enemyInterval = 1000;
 
+  // Display countdown before game starts
   function displayCountdown(context, canvas) {
     context.textAlign = "center";
     context.font = "80px 'Press Start 2P', cursive";
@@ -273,6 +295,7 @@ window.addEventListener("load", function () {
     );
   }
 
+  // Display game status text (score and game over message)
   function displayStatusText(context, canvas) {
     context.textAlign = "left";
     context.font = "30px 'Press Start 2P', cursive";
