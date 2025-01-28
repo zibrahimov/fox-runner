@@ -3,8 +3,10 @@ window.addEventListener("load", function () {
   const ctx = canvas.getContext("2d", { alpha: false });
 
   // Fixed canvas dimensions
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const GAME_WIDTH = window.innerWidth;
+  const GAME_HEIGHT = window.innerHeight;
+  canvas.width = GAME_WIDTH;
+  canvas.height = GAME_HEIGHT;
 
   // Game state
   let enemies = [];
