@@ -1,6 +1,6 @@
 # 🦊 Fox Runner
 
-**Fox Runner** is a fun game integrated into [PomoFox](https://www.pomofox.com/), a Pomodoro app designed to help you track time and stay focused. During your breaks, you can enjoy this game where you control a running fox, avoiding obstacles in the form of **tomato soldiers** with swords. Your goal is to survive for as long as possible and achieve the highest score!
+**Fox Runner** is a fun game integrated into [PomoFox](https://www.pomofox.com/), a Pomodoro app designed to help you track time and stay focused. During your breaks, you can enjoy this game where you control a running fox, avoiding obstacles in the form of **tomato soldiers**. Your goal is to survive for as long as possible and achieve the highest score!
 
 ![Fox Runner Game Demo](https://github.com/zibrahimov/fox-runner/blob/main/assets/game.gif?raw=true) <!-- Replace with your actual GIF URL -->
 
