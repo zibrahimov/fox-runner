@@ -2,6 +2,8 @@ window.addEventListener("load", function () {
   const canvas = document.getElementById("canvas1");
   const ctx = canvas.getContext("2d", { alpha: false });
 
+  let animationFrameId;
+
   // Fixed canvas dimensions
   const GAME_WIDTH = window.innerWidth;
   const GAME_HEIGHT = window.innerHeight;
@@ -233,6 +235,11 @@ window.addEventListener("load", function () {
     animate(0);
   }
 
+  function cleanup() {
+    cancelAnimationFrame(animationFrameId);
+    input.cleanup();
+  }
+
   // Initialize game objects
   const input = new InputHandler();
   const player = new Player(canvas.width, canvas.height);
@@ -329,8 +336,20 @@ window.addEventListener("load", function () {
 
     displayStatusText(ctx, canvas);
 
-    if (!gameOver) requestAnimationFrame(animate);
+    if (!gameOver) {
+      animationFrameId = requestAnimationFrame(animate);
+    }
   }
+
+  // Clean up when window is closed or hidden
+  window.addEventListener("unload", cleanup);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      cleanup();
+    } else {
+      animate(0);
+    }
+  });
 
   animate(0);
 });
