@@ -309,16 +309,20 @@ window.addEventListener("load", function () {
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Use limitedDelta only for game physics, not for countdown
+    const limitedDelta = Math.min(deltaTime, 32);
+
+    ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
     background.draw(ctx);
     player.draw(ctx);
 
     if (!gameStarted) {
+      // Use actual deltaTime for countdown, not limitedDelta
       if (countdownTimer > 1000) {
         countdown--;
         countdownTimer = 0;
       } else {
-        countdownTimer += deltaTime;
+        countdownTimer += deltaTime; // Use deltaTime instead of limitedDelta
       }
 
       if (countdown < 0) {
@@ -330,8 +334,8 @@ window.addEventListener("load", function () {
 
     if (gameStarted && !gameOver) {
       background.update();
-      player.update(input, deltaTime, enemies);
-      handleEnemies(deltaTime);
+      player.update(input, limitedDelta, enemies); // Use limitedDelta for game physics
+      handleEnemies(limitedDelta); // Use limitedDelta for enemy movement
     }
 
     displayStatusText(ctx, canvas);
