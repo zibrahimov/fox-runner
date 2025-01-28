@@ -22,19 +22,29 @@ window.addEventListener("load", function () {
   class InputHandler {
     constructor() {
       this.keys = new Set();
-      window.addEventListener("keydown", (e) => {
+
+      this.handleKeyDown = (e) => {
         if (e.key === "ArrowUp") {
+          e.preventDefault(); // Prevent page scrolling
           this.keys.add(e.key);
         } else if (e.key === "Enter" && gameOver) {
           restartGame();
         }
-      });
+      };
 
-      window.addEventListener("keyup", (e) => {
+      this.handleKeyUp = (e) => {
         if (e.key === "ArrowUp") {
           this.keys.delete(e.key);
         }
-      });
+      };
+
+      window.addEventListener("keydown", this.handleKeyDown);
+      window.addEventListener("keyup", this.handleKeyUp);
+    }
+
+    cleanup() {
+      window.removeEventListener("keydown", this.handleKeyDown);
+      window.removeEventListener("keyup", this.handleKeyUp);
     }
   }
 
